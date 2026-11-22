@@ -6,6 +6,12 @@
 # dotenv files
 .env
 
+# Local SQLite databases
+backend/IssueTracker.Api/*.db
+backend/IssueTracker.Api/*.db-shm
+backend/IssueTracker.Api/*.db-wal
+backend/IssueTracker.Api/*.db-journal
+
 # User-specific files
 *.rsuser
 *.suo
