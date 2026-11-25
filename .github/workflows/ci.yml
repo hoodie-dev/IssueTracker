@@ -1,0 +1,65 @@
+name: IssueTracker CI
+
+on: 
+    workflow_dispatch: 
+    push: 
+        branches: [main]
+        paths: 
+            - '.github/workflows/ci.yml'
+            - 'backend/**'
+            - 'frontend/**'
+    pull_request: 
+        branches: [main]
+        paths: 
+            - '.github/workflows/ci.yml'
+            - 'backend/**'
+            - 'frontend/**'
+jobs:
+    backend-ci:
+        name: .NET
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: backend
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v4
+
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v5
+              with:
+                  dotnet-version: '11.0.x'
+                  cache: true
+                  
+            - name: Restore dependencies
+              run: dotnet restore
+
+            - name: Build solution
+              run: dotnet build --no-restore --configuration Release
+
+            - name: Run tests
+              run: dotnet test --no-build --configuration Release --verbosity normal
+
+    frontend-ci:
+        name: Angular
+        runs-on: ubuntu-latest
+        defaults:
+          run:
+            working-directory: frontend
+
+        steps:
+          - name: Check out repository
+            uses: actions/checkout@v4
+
+          - name: Setup Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: '24'
+              cache: 'npm'
+              cache-dependency-path: frontend/package-lock.json
+              
+          - name: Install dependencies
+            run: npm ci
+
+          - name: Build
+            run: npm run build
